@@ -1,0 +1,19 @@
+{
+  "name": "scout_service_system_v3",
+  "version": "1.0.0",
+  "description": "Service system for Scouts based on feathers (backend) and vue/vuetify/vuex (frontend).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarkTank2/pff_service_system_v3.git"
+  },
+  "author": "Seiler, Alexander",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DarkTank2/pff_service_system_v3/issues"
+  },
+  "homepage": "https://github.com/DarkTank2/pff_service_system_v3#readme"
+}
