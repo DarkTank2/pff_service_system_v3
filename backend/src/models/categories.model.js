@@ -16,10 +16,16 @@ module.exports = app => {
     }, {
         timestamps: true,
         updatedAt: true
+    }, {
+        hooks: {
+            beforeCount(options) {
+                options.raw = true
+            }
+        }
     })
 
     categories.associate = ({ items }) => {
         categories.hasMany(items, { foreignKey: { allowNull: false }})
     }
-    return tables
+    return categories
 }

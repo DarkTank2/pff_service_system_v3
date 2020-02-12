@@ -20,6 +20,12 @@ module.exports = app => {
     }, {
         timestamps: true,
         updatedAt: true
+    }, {
+        hooks: {
+            beforeCount(options) {
+                options.raw = true
+            }
+        }
     })
 
     extensions.associate = ({ orderedItems, items }) => {
@@ -30,5 +36,5 @@ module.exports = app => {
             through: 'itemsCanHaveExtensions'
         })
     }
-    return tables
+    return extensions
 }

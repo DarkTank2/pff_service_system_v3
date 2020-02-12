@@ -25,13 +25,8 @@ module.exports = app => {
         }
     })
 
-    tables.associate = models => { // eslint-disable-line no-unused-vars
-        const { orders } = models
-        tables.hasMany(orders, {
-            foreignKey: {
-                allowNull: false
-            }
-        })
+    tables.associate = ({ orders }) => { // eslint-disable-line no-unused-vars
+        tables.hasMany(orders, { foreignKey: { allowNull: false } })
     }
     return tables
 }

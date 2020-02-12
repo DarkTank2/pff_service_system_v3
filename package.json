@@ -4,7 +4,8 @@
   "description": "Service system for Scouts based on feathers (backend) and vue/vuetify/vuex (frontend).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "back": "cd ./backend && npm run dev"
   },
   "repository": {
     "type": "git",

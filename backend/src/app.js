@@ -36,6 +36,8 @@ app.use('/', express.static(app.get('public')))
 app.configure(express.rest())
 app.configure(socketio())
 
+app.set('paginate', false)
+
 app.configure(sequelize)
 
 // Configure other middleware (see `middleware/index.js`)

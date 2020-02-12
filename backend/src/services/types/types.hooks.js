@@ -1,12 +1,10 @@
 
 
-const orderAssociation = require('../../hooks/order-association');
-
 module.exports = {
   before: {
     all: [],
-    find: [orderAssociation()],
-    get: [orderAssociation()],
+    find: [],
+    get: [],
     create: [],
     update: [],
     patch: [],

@@ -12,6 +12,12 @@ module.exports = app => {
     }, {
         timestamps: true,
         updatedAt: false
+    }, {
+        hooks: {
+            beforeCount(options) {
+                options.raw = true
+            }
+        }
     })
 
     itemsCanHaveExtensions.associate = ({ items, extensions }) => {
@@ -19,5 +25,5 @@ module.exports = app => {
         itemsCanHaveExtensions.belongsTo(extensions, { foreignKey: { allowNull: false }})
       
     }
-    return tables
+    return itemsCanHaveExtensions
 }

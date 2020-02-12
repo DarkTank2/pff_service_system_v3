@@ -20,14 +20,20 @@ module.exports = app => {
     }, {
         timestamps: true,
         updatedAt: true
+    }, {
+        hooks: {
+            beforeCount(options) {
+                options.raw = true
+            }
+        }
     })
 
     items.associate = ({ types, categories, extensions }) => {
-        items.belongsTo(types, { foreignKey: { allowNull: false }})
-        items.belongsTo(categories, { foreignKey: { allowNull: false }})
+        items.belongsTo(types, { foreignKey: { allowNull: false } })
+        items.belongsTo(categories, { foreignKey: { allowNull: false } })
         items.belongsToMany(extensions, {
             through: 'itemsCanHaveExtensions'
         })
     }
-    return tables
+    return items
 }
