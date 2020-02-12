@@ -1,11 +1,17 @@
 
 
+const addMetaData = require('../../hooks/add-meta-data');
+
+const createOrderedItemExtensionMap = require('../../hooks/create-ordered-item-extension-map');
+
+const orderedItemAssociation = require('../../hooks/ordered-item-association');
+
 module.exports = {
   before: {
     all: [],
-    find: [],
-    get: [],
-    create: [],
+    find: [orderedItemAssociation()],
+    get: [orderedItemAssociation()],
+    create: [addMetaData()],
     update: [],
     patch: [],
     remove: []
@@ -15,7 +21,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [createOrderedItemExtensionMap()],
     update: [],
     patch: [],
     remove: []
