@@ -17,6 +17,12 @@ module.exports = app => {
     }, {
         timestamps: true,
         updatedAt: true
+    }, {
+        hooks: {
+            beforeCount(options) {
+                options.raw = true
+            }
+        }
     })
 
     tables.associate = models => { // eslint-disable-line no-unused-vars

@@ -3,7 +3,7 @@ const DataTypes = Sequelize.DataTypes
 
 module.exports = app => {
     const sequelizeClient = app.get('sequelizeClient')
-    const types = sequelizeClient.define('types', {
+    const items = sequelizeClient.define('items', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -12,14 +12,22 @@ module.exports = app => {
         name: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        price: {
+            type: DataTypes.FLOAT,
+            allowNull: false
         }
     }, {
         timestamps: true,
         updatedAt: true
     })
 
-    types.associate = ({ items }) => {
-        types.hasMany(items, { foreignKey: { allowNull: false }})
+    items.associate = ({ types, categories, extensions }) => {
+        items.belongsTo(types, { foreignKey: { allowNull: false }})
+        items.belongsTo(categories, { foreignKey: { allowNull: false }})
+        items.belongsToMany(extensions, {
+            through: 'itemsCanHaveExtensions'
+        })
     }
     return tables
 }

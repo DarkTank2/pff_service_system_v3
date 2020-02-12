@@ -3,7 +3,7 @@ const DataTypes = Sequelize.DataTypes
 
 module.exports = app => {
     const sequelizeClient = app.get('sequelizeClient')
-    const types = sequelizeClient.define('types', {
+    const categories = sequelizeClient.define('categories', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -18,8 +18,8 @@ module.exports = app => {
         updatedAt: true
     })
 
-    types.associate = ({ items }) => {
-        types.hasMany(items, { foreignKey: { allowNull: false }})
+    categories.associate = ({ items }) => {
+        categories.hasMany(items, { foreignKey: { allowNull: false }})
     }
     return tables
 }

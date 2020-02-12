@@ -15,16 +15,8 @@ module.exports = app => {
     })
 
     itemsCanHaveExtensions.associate = ({ items, extensions }) => {
-        itemsCanHaveExtensions.belongsTo(items, {
-            foreignKey: {
-              allowNull: false
-            }
-        })
-        itemsCanHaveExtensions.belongsTo(extensions, {
-            foreignKey: {
-                allowNull: false
-            }
-        })
+        itemsCanHaveExtensions.belongsTo(items, { foreignKey: { allowNull: false }})
+        itemsCanHaveExtensions.belongsTo(extensions, { foreignKey: { allowNull: false }})
       
     }
     return tables

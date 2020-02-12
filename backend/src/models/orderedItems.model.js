@@ -31,16 +31,8 @@ module.exports = app => {
     })
 
     orderedItems.associate = ({ orders, items, extensions }) => {
-        orderedItems.belongsTo(orders, {
-            foreignKey: {
-                allowNull: false
-            }
-        })
-        orderedItems.belongsTo(items, {
-            foreignKey: {
-                allowNull: false
-            }
-        })
+        orderedItems.belongsTo(orders, { foreignKey: { allowNull: false }})
+        orderedItems.belongsTo(items, { foreignKey: { allowNull: false }})
         orderedItems.belongsToMany(extensions, {
             through: 'orderedItemsHaveExtensions'
         })
