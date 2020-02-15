@@ -1,5 +1,4 @@
 const tables = require('./tables/tables.service.js')
-const orders = require('./orders/orders.service.js')
 const types = require('./types/types.service.js')
 const orderedItems = require('./ordered-items/ordered-items.service.js')
 const items = require('./items/items.service.js')
@@ -10,7 +9,6 @@ const orderedItemsHaveExtensions = require('./ordered-items-have-extensions/orde
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(tables)
-  app.configure(orders)
   app.configure(types)
   app.configure(orderedItems)
   app.configure(items)

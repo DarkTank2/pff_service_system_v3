@@ -6,6 +6,8 @@ const createOrderedItemExtensionMap = require('../../hooks/create-ordered-item-e
 
 const orderedItemAssociation = require('../../hooks/ordered-item-association');
 
+const returnFullOrderedItem = require('../../hooks/return-full-ordered-item');
+
 module.exports = {
   before: {
     all: [],
@@ -21,7 +23,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [createOrderedItemExtensionMap()],
+    create: [createOrderedItemExtensionMap(), returnFullOrderedItem()],
     update: [],
     patch: [],
     remove: []

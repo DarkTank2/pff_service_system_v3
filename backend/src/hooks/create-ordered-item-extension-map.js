@@ -4,8 +4,6 @@
 // eslint-disable-next-line no-unused-vars
 module.exports = (options = {}) => {
   return async context => {
-    console.log(context.data)
-    console.log(context.result)
     let promises = []
     context.data.extensions.forEach(extension => {
       promises.push(context.app.service('/backend/ordered-items-have-extensions').create({
@@ -13,6 +11,8 @@ module.exports = (options = {}) => {
         extensionId: extension.id
       }))
     })
-    Promise.all(promises).then(() => context).catch(() => context)
+    Promise.all(promises).then(() => {
+      return context
+    }).catch(() => context)
   };
 };

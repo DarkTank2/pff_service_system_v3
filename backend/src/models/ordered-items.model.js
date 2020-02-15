@@ -24,6 +24,14 @@ module.exports = app => {
         cashed: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        waiter: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        comment: {
+          type: DataTypes.STRING,
+          allowNull: false
         }
     }, {
         timestamps: true,
@@ -36,8 +44,8 @@ module.exports = app => {
         }
     })
 
-    orderedItems.associate = ({ orders, items, extensions }) => {
-        orderedItems.belongsTo(orders, { foreignKey: { allowNull: false }})
+    orderedItems.associate = ({ items, extensions, tables }) => {
+        orderedItems.belongsTo(tables, { foreignKey: { allowNull: false } })
         orderedItems.belongsTo(items, { foreignKey: { allowNull: false }})
         orderedItems.belongsToMany(extensions, {
             through: 'orderedItemsHaveExtensions'

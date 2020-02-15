@@ -5,16 +5,12 @@
 module.exports = (options = {}) => {
   return async context => {
     const sequelize = context.app.get('sequelizeClient');
-    const { types, categories, extensions, orders, tables, items } = sequelize.models;
+    const { types, categories, extensions, tables, items } = sequelize.models;
     context.params.sequelize = {
       attributes: ['id', 'quantity', 'finished', 'served', 'cashed'],
       include: [
         { model: extensions, attributes: ['id', 'name'] },
-        {
-          model: orders, attributes: ['id', 'waiter', 'comment'], include: [
-            { model: tables, attributes: ['id', 'name'] }
-          ]
-        },
+        { model: tables, attributes: ['id', 'name'] },
         {
           model: items, attributes: ['id', 'name'], include: [
             { model: types, attributes: ['id', 'name'] },

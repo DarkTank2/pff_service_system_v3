@@ -40,12 +40,26 @@ module.exports = function(app) {
   app.publish((data, hook) => {
     // Here you can add event publishers to channels set up in `channels.js`
     // To publish only for a specific event use `app.publish(eventname, () => {})`
-
     console.log('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
 
     // e.g. to publish all service events to all authenticated users use
-    return app.channel('authenticated');
+    return app.channel('anonymous');
   });
+
+  // not working as intended since ordered item gets created, then the event gets published and then the extension mapping is created :/
+  // use custom events
+  // app.service('/backend/ordered-items').publish('created', (data) => {
+  //   console.log(data)
+  //   app.service('/backend/ordered-items-have-extensions').find({
+  //     query: {
+  //       orderedItemId: data.id
+  //     }
+  //   }).then(result => {
+  //     data.extensions = result.data
+  //     console.log(data)
+  //     return app.channel('anonymous');
+  //   }).catch(err => console.log(err))
+  // })
 
   // Here you can also add service specific event publishers
   // e.g. the publish the `users` service `created` event to the `admins` channel
