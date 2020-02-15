@@ -8,5 +8,8 @@ export default new Vuetify({
   lang: {
     locales: { de },
     current: 'de'
+  },
+  icons: {
+    iconfont: 'mdi'
   }
 })

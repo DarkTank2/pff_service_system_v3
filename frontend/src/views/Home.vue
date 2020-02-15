@@ -8,11 +8,20 @@
 <script>
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'home',
   components: {
     HelloWorld
+  },
+  created: function () {
+    this.fetchTables()
+  },
+  methods: {
+    ...mapActions('tables', {
+      fetchTables: 'find'
+    })
   }
 }
 </script>

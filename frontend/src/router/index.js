@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Waiter from '../views/Waiter.vue'
+import WaiterItem from '../views/WaiterItem.vue'
+import WaiterCategory from '../views/WaiterCategory.vue'
 
 Vue.use(VueRouter)
 
@@ -9,6 +12,21 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home
+  },
+  {
+    path: '/waiter',
+    name: 'waiter',
+    component: Waiter
+  },
+  {
+    path: '/waiter/:categoryId',
+    name: 'waiterCategory',
+    component: WaiterCategory
+  },
+  {
+    path: '/waiter/:categoryId/:itemId',
+    name: 'waiterItem',
+    component: WaiterItem
   },
   {
     path: '/about',
