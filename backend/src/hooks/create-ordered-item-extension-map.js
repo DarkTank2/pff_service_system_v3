@@ -11,8 +11,7 @@ module.exports = (options = {}) => {
         extensionId: extension.id
       }))
     })
-    Promise.all(promises).then(() => {
-      return context
-    }).catch(() => context)
+    await Promise.all(promises)
+    return context
   };
 };

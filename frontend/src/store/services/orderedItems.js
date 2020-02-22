@@ -11,12 +11,12 @@ class OrderedItems extends BaseModel {
   static instanceDefaults () {
     return {
       id: 0,
-      itemId: 0,
       quantity: 0,
       waiter: '',
       comment: '',
-      tableId: 0,
-      extensions: []
+      extensions: [],
+      table: {},
+      item: {}
     }
   }
 }

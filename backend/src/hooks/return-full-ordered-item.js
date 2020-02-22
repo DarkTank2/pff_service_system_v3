@@ -4,6 +4,8 @@
 // eslint-disable-next-line no-unused-vars
 module.exports = (options = {}) => {
   return async context => {
+    let item = await context.app.service('/backend/ordered-items').get(context.result.id)
+    context.result = item
     return context
   };
 };

@@ -7,7 +7,7 @@ module.exports = (options = {}) => {
     const sequelize = context.app.get('sequelizeClient');
     const { types, categories, extensions, tables, items } = sequelize.models;
     context.params.sequelize = {
-      attributes: ['id', 'quantity', 'finished', 'served', 'cashed'],
+      attributes: ['id', 'quantity', 'finished', 'served', 'cashed', 'comment', 'waiter'],
       include: [
         { model: extensions, attributes: ['id', 'name'] },
         { model: tables, attributes: ['id', 'name'] },
