@@ -15,6 +15,11 @@
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="12">
+        <v-text-field clearable clear-icon="close" v-model="filter" label="Filter" @click:clear="filter = ''"/>
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col cols='12' sm='3' v-for="cat in categories" :key="cat.name">
         <v-card :to="{ name: 'waiterCategory', params: {categoryId: cat.id} }">
           <v-card-title>{{ cat.name }}</v-card-title>
@@ -36,7 +41,8 @@ export default {
           text: 'Kategorien',
           disabled: true
         }
-      ]
+      ],
+      filter: ''
     }
   },
   created: function () {},
@@ -50,9 +56,12 @@ export default {
   },
   computed: {
     ...mapGetters('categories', {
-      categories: 'list',
+      listCategories: 'list',
       findcategories: 'find'
-    })
+    }),
+    categories: function () {
+      return this.listCategories.filter(cat => cat.name.toLowerCase().includes(this.filter.toLowerCase()))
+    }
   },
   watch: {}
 }

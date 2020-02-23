@@ -50,6 +50,12 @@
         <v-btn block @click="sendOrderedItem"><v-icon>send</v-icon>Abschicken</v-btn>
       </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar">
+      {{ snackText }}
+      <v-btn text @click="closeSnack">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -62,7 +68,9 @@ export default {
     return {
       selection: [],
       comment: '',
-      quantity: 1
+      quantity: 1,
+      snackbar: false,
+      snackText: ''
     }
   },
   created: function () {},
@@ -82,9 +90,18 @@ export default {
     }),
     sendOrderedItem: function () {
       this.quantity = parseInt(this.quantity)
-      if (this.name === '' || this.name === undefined) return
-      if (!(this.tableId > 0)) return
-      if (!(this.quantity > 0)) return
+      if (this.name === '' || this.name === undefined) {
+        this.showSnack('Du hast keinen Namen!')
+        return
+      }
+      if (!(this.tableId > 0)) {
+        this.showSnack('Kein Tisch ausgewählt!')
+        return
+      }
+      if (!(this.quantity > 0)) {
+        this.showSnack('Kein Anzahl eingegeben!')
+        return
+      }
       this.comment = this.comment.length > 255 ? this.comment.substring(0, 255) : this.comment
       let orderedItem = {
         itemId: this.item.id,
@@ -94,11 +111,21 @@ export default {
         tableId: this.tableId,
         extensions: this.selection.map(ext => ({ id: ext.id }))
       }
-      this.createOrderedItem(orderedItem).then(() => {
+      this.createOrderedItem(orderedItem).then((item) => {
         this.quantity = 1
         this.selection = []
         this.comment = ''
+        this.showSnack(item.id + ': Erfolgreich!')
       }).catch(err => alert(JSON.stringify(err)))
+    },
+    showSnack: function (text) {
+      this.snackText = text
+      this.snackbar = true
+      setTimeout(this.closeSnack, 2000)
+    },
+    closeSnack: function () {
+      this.snackbar = false
+      this.snackText = ''
     }
   },
   computed: {

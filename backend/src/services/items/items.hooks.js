@@ -2,6 +2,10 @@
 
 const itemAssociation = require('../../hooks/item-association');
 
+const createItemExtensionsMap = require('../../hooks/create-item-extensions-map');
+
+const returnFullItem = require('../../hooks/return-full-item');
+
 module.exports = {
   before: {
     all: [],
@@ -17,9 +21,9 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
+    create: [createItemExtensionsMap(), returnFullItem()],
+    update: [createItemExtensionsMap(), returnFullItem()],
+    patch: [createItemExtensionsMap(), returnFullItem()],
     remove: []
   },
 

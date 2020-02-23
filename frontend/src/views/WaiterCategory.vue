@@ -15,6 +15,11 @@
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="12">
+        <v-text-field clearable clear-icon="close" v-model="filter" label="Filter" @click:clear="filter = ''"/>
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col cols='12' sm='3' v-for="item in filteredItems" :key="item.name">
         <v-card :to="{ name: 'waiterItem', params: {categoryId: $route.params.categoryId, itemId: item.id} }">
           <v-card-title>{{ item.name }}</v-card-title>
@@ -30,7 +35,9 @@ export default {
   props: [],
   components: {},
   data () {
-    return {}
+    return {
+      filter: ''
+    }
   },
   created: function () {},
   mounted: function () {
@@ -57,7 +64,7 @@ export default {
         query: {
           categoryId: parseInt(this.$route.params.categoryId)
         }
-      }).data
+      }).data.filter(item => item.name.toLowerCase().includes(this.filter.toLowerCase()))
     },
     category: function () {
       return this.getCategory(parseInt(this.$route.params.categoryId))

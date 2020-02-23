@@ -10,7 +10,6 @@ class OrderedItems extends BaseModel {
   // Define default properties here
   static instanceDefaults () {
     return {
-      id: 0,
       quantity: 0,
       waiter: '',
       comment: '',

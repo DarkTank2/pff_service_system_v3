@@ -4,6 +4,8 @@ import Home from '../views/Home.vue'
 import Waiter from '../views/Waiter.vue'
 import WaiterItem from '../views/WaiterItem.vue'
 import WaiterCategory from '../views/WaiterCategory.vue'
+import Configurator from '../views/Configurator.vue'
+import Buffet from '../views/Buffet.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +29,16 @@ const routes = [
     path: '/waiter/:categoryId/:itemId',
     name: 'waiterItem',
     component: WaiterItem
+  },
+  {
+    path: '/configurator',
+    name: 'configurator',
+    component: Configurator
+  },
+  {
+    path: '/buffet',
+    name: 'buffet',
+    component: Buffet
   },
   {
     path: '/about',

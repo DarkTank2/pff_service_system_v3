@@ -10,8 +10,7 @@ class Tables extends BaseModel {
   // Define default properties here
   static instanceDefaults () {
     return {
-      id: 0,
-      name: ''
+      name: 'New table'
     }
   }
 }
