@@ -4,6 +4,7 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"><v-icon>menu</v-icon></v-app-bar-nav-icon>
       <span class="font-weight-light">{{title}}</span>
       <v-spacer></v-spacer>
+      <FinalizeButton v-if="$route.path.includes('waiter')"/>
       <v-switch v-model="darkMode" label="Darkmode" @change="$vuetify.theme.dark = darkMode" hide-details></v-switch>
     </v-app-bar>
     <v-content>
@@ -15,12 +16,13 @@
 
 <script>
 import Sidebar from './components/Sidebar.vue'
+import FinalizeButton from './components/waiter/finalizeButton'
 import { mapState } from 'vuex'
 export default {
   name: 'App',
-
   components: {
-    Sidebar
+    Sidebar,
+    FinalizeButton
   },
 
   data: () => ({

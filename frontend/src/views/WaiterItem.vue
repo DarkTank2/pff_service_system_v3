@@ -47,7 +47,7 @@
         <v-text-field v-model="quantity" type="number" label="Anzahl"></v-text-field>
       </v-col>
       <v-col cols="12" sm="12">
-        <v-btn block @click="sendOrderedItem"><v-icon>send</v-icon>Abschicken</v-btn>
+        <v-btn block @click="sendOrderedItem"><v-icon>add</v-icon>Hinzufügen</v-btn>
       </v-col>
     </v-row>
     <v-snackbar v-model="snackbar">
@@ -59,7 +59,7 @@
   </v-container>
 </template>
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 export default {
   name: 'waiterItem',
   props: [],
@@ -88,6 +88,9 @@ export default {
     ...mapActions('ordered-items', {
       createOrderedItem: 'create'
     }),
+    ...mapMutations('base', {
+      addOrderedItemToOrder: 'addOrderedItem'
+    }),
     sendOrderedItem: function () {
       this.quantity = parseInt(this.quantity)
       if (this.name === '' || this.name === undefined) {
@@ -109,14 +112,19 @@ export default {
         waiter: this.name,
         comment: this.comment,
         tableId: this.tableId,
-        extensions: this.selection.map(ext => ({ id: ext.id }))
+        extensions: this.selection.map(ext => ({ id: ext.id, name: ext.name }))
       }
-      this.createOrderedItem(orderedItem).then((item) => {
-        this.quantity = 1
-        this.selection = []
-        this.comment = ''
-        this.showSnack(item.id + ': Erfolgreich!')
-      }).catch(err => alert(JSON.stringify(err)))
+      this.addOrderedItemToOrder(orderedItem)
+      this.quantity = 1
+      this.selection = []
+      this.comment = ''
+      this.showSnack('Zu Bestellung hinzugefügt!')
+      // this.createOrderedItem(orderedItem).then((item) => {
+      //   this.quantity = 1
+      //   this.selection = []
+      //   this.comment = ''
+      //   this.showSnack(item.id + ': Erfolgreich!')
+      // }).catch(err => alert(JSON.stringify(err)))
     },
     showSnack: function (text) {
       this.snackText = text

@@ -25,7 +25,8 @@ const base = {
   state: {
     name: '',
     title: '',
-    tableId: 0
+    tableId: 0,
+    order: []
   },
   mutations: baseMutations,
   getters: baseGetters,

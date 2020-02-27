@@ -55,9 +55,9 @@
       </v-col>
     </v-row>
     <v-row>
-        <v-col cols="4" v-for="(cluster, index) in clusteredOrderedItems" :key="'cluster-' + index">
-            <Cluster :cluster="cluster"/>
-        </v-col>
+      <v-col cols="4" v-for="(cluster, index) in clusteredOrderedItems" :key="'cluster-' + index">
+        <Cluster :cluster="cluster" v-on:chosen="clusterChosen(cluster)"/>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -75,7 +75,8 @@ export default {
       configModel: null,
       categorySelection: [],
       typeSelection: [],
-      itemSelection: []
+      itemSelection: [],
+      chosenOrderedItems: []
     }
   },
   created: function () {},
@@ -97,7 +98,10 @@ export default {
     }),
     ...mapActions('ordered-items', {
       fetchOrderedItems: 'find'
-    })
+    }),
+    clusterChosen: function (cluster) {
+      this.chosenOrderedItems = [...this.chosenOrderedItems, ...cluster.orderedItems.map(({ id }) => id)]
+    }
   },
   watch: {},
   computed: {
@@ -140,12 +144,21 @@ export default {
       }
       items = [...this.itemSelection.map(item => item.id), ...typeItems, ...categoryItems]
       if (items.length === 0) {
-        orderedItems = this.orderedItems
+        orderedItems = this.findOrderedItems({
+          query: {
+            $sort: {
+              id: 1
+            }
+          }
+        }).data
       } else {
         orderedItems = this.findOrderedItems({
           query: {
             itemId: {
               $in: items
+            },
+            $sort: {
+              id: 1
             }
           }
         }).data
@@ -155,7 +168,7 @@ export default {
         table: {}
       }
       let clusters = []
-      orderedItems.forEach(OI => {
+      orderedItems.filter(({ finished, quantity }) => finished < quantity).forEach(OI => {
         if (cluster.orderedItems.length === 0) {
           // new cluster
           cluster.orderedItems.push(OI)
@@ -173,6 +186,13 @@ export default {
       if (cluster.orderedItems.length > 0) {
         clusters.push(cluster)
       }
+      clusters.forEach(cluster => {
+        if (cluster.orderedItems.some(({ id }) => this.chosenOrderedItems.includes(id))) {
+          cluster.chosen = true
+        } else {
+          cluster.chosen = false
+        }
+      })
       return clusters
     }
   }

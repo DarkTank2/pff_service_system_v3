@@ -6,6 +6,7 @@ import WaiterItem from '../views/WaiterItem.vue'
 import WaiterCategory from '../views/WaiterCategory.vue'
 import Configurator from '../views/Configurator.vue'
 import Buffet from '../views/Buffet.vue'
+import Servant from '../views/Servant.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ const routes = [
     path: '/buffet',
     name: 'buffet',
     component: Buffet
+  },
+  {
+    path: '/servant',
+    name: 'servant',
+    component: Servant
   },
   {
     path: '/about',
