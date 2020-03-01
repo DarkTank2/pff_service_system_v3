@@ -7,6 +7,7 @@ import WaiterCategory from '../views/WaiterCategory.vue'
 import Configurator from '../views/Configurator.vue'
 import Buffet from '../views/Buffet.vue'
 import Servant from '../views/Servant.vue'
+import Master from '../views/Master.vue'
 
 Vue.use(VueRouter)
 
@@ -45,6 +46,11 @@ const routes = [
     path: '/servant',
     name: 'servant',
     component: Servant
+  },
+  {
+    path: '/master',
+    name: 'master',
+    component: Master
   },
   {
     path: '/about',

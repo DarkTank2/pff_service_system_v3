@@ -24,8 +24,8 @@ module.exports = {
     find: [],
     get: [],
     create: [createOrderedItemExtensionMap(), returnFullOrderedItem()],
-    update: [],
-    patch: [],
+    update: [returnFullOrderedItem()],
+    patch: [returnFullOrderedItem()],
     remove: []
   },
 
