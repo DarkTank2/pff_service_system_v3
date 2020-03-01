@@ -97,20 +97,37 @@ export default {
       rawOrderedItems: 'list'
     }),
     ...mapGetters('tables', {
-      tables: 'list'
+      allTables: 'list',
+      findTables: 'find'
     }),
     filteredOrderedItems: function () {
-      return this.rawOrderedItems.filter(({ cashed, served, quantity, finished }) => quantity === finished).filter(({ tableId }) => this.selectedTables.includes(tableId))
+      return this.rawOrderedItems.filter(({ cashed, served, quantity, finished }) => quantity === finished)
+    },
+    tableFilteredOrderedItems: function () {
+      return this.filteredOrderedItems.filter(({ tableId }) => this.selectedTables.includes(tableId))
     },
     finishedOrderedItems: function () {
-      return this.filteredOrderedItems.filter(({ quantity, served }) => quantity > served)
+      return this.tableFilteredOrderedItems.filter(({ quantity, served }) => quantity > served)
     },
     servedOrderedItems: function () {
-      return this.filteredOrderedItems.filter(({ quantity, served, cashed }) => quantity > cashed && cashed < served)
+      return this.tableFilteredOrderedItems.filter(({ quantity, served, cashed }) => quantity > cashed && cashed < served)
     },
     allText: function () {
       if (this.tables.length === this.selectedTables.length && this.selectedTables.length > 0) return 'Alles Abwählen'
       return 'Alles Auswählen'
+    },
+    tables: function () {
+      let ids = []
+      this.filteredOrderedItems.forEach(({ tableId }) => {
+        if (!ids.includes(tableId)) ids.push(tableId)
+      })
+      return this.findTables({
+        query: {
+          id: {
+            $in: ids
+          }
+        }
+      }).data
     }
   }
 }
