@@ -38,7 +38,7 @@ export default {
   created: function () {},
   mounted: function () {},
   methods: {
-    ...mapActions('base', {
+    ...mapActions('waiter', {
       sendOrder: 'finalizeOrder'
     }),
     finalizeOrder: function () {
@@ -50,7 +50,7 @@ export default {
   },
   watch: {},
   computed: {
-    ...mapGetters('base', ['order']),
+    ...mapGetters('waiter', ['order']),
     ...mapGetters('items', {
       getItem: 'get'
     })

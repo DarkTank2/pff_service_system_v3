@@ -15,24 +15,9 @@ const setTableId = (state, payload) => {
   state.tableId = payload
 }
 
-const addOrderedItem = (state, payload) => {
-  state.order.push(payload)
-}
-
-const removeIndexedOrderedItem = (state, index) => {
-  state.order = state.order.filter((item, i) => i !== index)
-}
-
-const clearOrder = state => {
-  state.order = []
-}
-
 export default {
   fetchName,
   setName,
   setTitle,
-  setTableId,
-  addOrderedItem,
-  removeIndexedOrderedItem,
-  clearOrder
+  setTableId
 }

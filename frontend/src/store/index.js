@@ -5,6 +5,10 @@ import baseMutations from './base/mutations'
 import baseGetters from './base/getters'
 import baseActions from './base/actions'
 
+import waiterGetters from './waiter/getters'
+import waiterActions from './waiter/actions'
+import waiterMutations from './waiter/mutations'
+
 Vue.use(Vuex)
 Vue.use(FeathersVuex)
 
@@ -25,12 +29,21 @@ const base = {
   state: {
     name: '',
     title: '',
-    tableId: 0,
-    order: []
+    tableId: 0
   },
   mutations: baseMutations,
   getters: baseGetters,
   actions: baseActions
+}
+
+const waiter = {
+  namespaced: true,
+  state: {
+    order: []
+  },
+  mutations: waiterMutations,
+  getters: waiterGetters,
+  actions: waiterActions
 }
 
 export default new Vuex.Store({
@@ -38,7 +51,8 @@ export default new Vuex.Store({
   mutations: {},
   actions: {},
   modules: {
-    base
+    base,
+    waiter
   },
   plugins: [...servicePlugins]
 })

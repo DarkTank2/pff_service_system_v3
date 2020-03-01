@@ -88,7 +88,7 @@ export default {
     ...mapActions('ordered-items', {
       createOrderedItem: 'create'
     }),
-    ...mapMutations('base', {
+    ...mapMutations('waiter', {
       addOrderedItemToOrder: 'addOrderedItem'
     }),
     sendOrderedItem: function () {
