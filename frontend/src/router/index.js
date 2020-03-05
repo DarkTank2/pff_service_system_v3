@@ -8,6 +8,8 @@ import Configurator from '../views/Configurator.vue'
 import Buffet from '../views/Buffet.vue'
 import Servant from '../views/Servant.vue'
 import Master from '../views/Master.vue'
+import Hierarchy from '../views/Hierarchy.vue'
+import Scoreboard from '../views/Scoreboard.vue'
 
 Vue.use(VueRouter)
 
@@ -51,6 +53,16 @@ const routes = [
     path: '/master',
     name: 'master',
     component: Master
+  },
+  {
+    path: '/hierarchy',
+    name: 'hierarchy',
+    component: Hierarchy
+  },
+  {
+    path: '/scoreboard',
+    name: 'scoreboard',
+    component: Scoreboard
   },
   {
     path: '/about',
