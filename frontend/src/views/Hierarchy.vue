@@ -22,36 +22,56 @@
           <text
             v-for="(item, index) in root.descendants()"
             :key="'text/' + index"
-            :dx="item.children && item.children.length > 0 && index > 0 ? '-6' : '6'"
+            :dx="dx(item, index)"
             dy="5"
-            :text-anchor="item.children && item.children.length > 0 && index > 0 ? 'end' : 'start'"
+            :text-anchor="textAnchor(item, index)"
             stroke="#1E1E1E"
             :x="item.y"
             :y="item.x"
             >{{ item.data.name }}</text>
-          </g>
-          <g
-            fill="none"
-            stroke="#999"
-            stroke-opacity="0.4"
-            stroke-width="1.5"
+          <text
+            v-for="(ext, ind) in extensionHierarchy"
+            :key="'ext/text/' + ind"
+            dx="6"
+            dy="5"
+            text-anchor="start"
+            stroke="#1e1e1e"
+            :x="ext.y"
+            :y="ext.x"
             >
-            <path
-              v-for="(link, index) in root.links()"
-              :key="'path/' + index"
-              :d="linkGenerator([link.source, link.target])"
-              />
-          </g>
-          <g>
-            <circle
-              v-for="(item, index) in root.descendants()"
-              :key="'circle/' + index"
-              :fill="item.children && item.children.length > 0 ? '#555' : '#999'"
-              r="5"
-              :cx="item.y"
-              :cy="item.x"
-              />
-          </g>
+              {{ ext.name }}
+            </text>
+        </g>
+         <g
+          fill="none"
+          stroke="#999"
+          stroke-opacity="0.4"
+          stroke-width="1.5"
+          >
+          <path
+            v-for="(link, index) in [...root.links(), ...extensionPaths]"
+            :key="'path/' + index"
+            :d="linkGenerator([link.source, link.target])"
+            />
+        </g>
+        <g>
+          <circle
+            v-for="(item, index) in root.descendants()"
+            :key="'circle/' + index"
+            :fill="fill(item)"
+            r="5"
+            :cx="item.y"
+            :cy="item.x"
+            />
+          <circle
+            v-for="(ext, ind) in extensionHierarchy"
+            :key="'ext/circle/' + ind"
+            fill="#555"
+            r="5"
+            :cx="ext.y"
+            :cy="ext.x"
+            />
+        </g>
       </svg>
     </v-card-text>
   </v-card>
@@ -66,7 +86,7 @@ export default {
   data () {
     return {
       typeModel: undefined,
-      width: 1000,
+      width: 800,
       height: 1000
     }
   },
@@ -88,7 +108,7 @@ export default {
         y: source.x
       }
       let origin2 = {
-        x: source.y + 100,
+        x: source.y + 200,
         y: source.x
       }
       let destination = {
@@ -96,7 +116,7 @@ export default {
         y: target.x
       }
       let destination2 = {
-        x: target.y - 100,
+        x: target.y - 200,
         y: target.x
       }
       let d = 'M'
@@ -106,6 +126,23 @@ export default {
       d += ',' + destination2.x + ',' + destination2.y
       d += ',' + destination.x + ',' + destination.y
       return d
+    },
+    dx: function (item, index) {
+      if (index === 0) return '6'
+      if (item.children && item.children.length > 0) return '-6'
+      if (item.data.extensions && item.data.extensions.length > 0) return '-6'
+      return '6'
+    },
+    textAnchor: function (item, index) {
+      if (index === 0) return 'start'
+      if (item.children && item.children.length > 0) return 'end'
+      if (item.data.extensions && item.data.extensions.length > 0) return 'end'
+      return 'start'
+    },
+    fill: function (item) {
+      if (item.children && item.children.length > 0) return '#555'
+      if (item.data.extensions && item.data.extensions.length > 0) return '#555'
+      return '#999'
     }
   },
   watch: {},
@@ -136,9 +173,6 @@ export default {
         category.children = items.filter(({ categoryId }) => {
           return categoryId === category.id
         })
-          .map(({ name, extensions }) => {
-            return { name, children: extensions }
-          })
       })
       return data
     },
@@ -148,7 +182,7 @@ export default {
     },
     layout: function () {
       return d3.tree()
-        .size([this.width, this.height])
+        .size([this.height, this.width])
         .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth)
     },
     root: function () {
@@ -156,6 +190,45 @@ export default {
     },
     linkGenerator: function () {
       return (val) => this.calcPath(val)
+    },
+    lowestChilds: function () {
+      return this.root.descendants()
+        .filter(({ height }) => height === 0)
+    },
+    extensionHierarchy: function () {
+      let allExtensions = []
+      this.lowestChilds.forEach(({ data: { extensions } }) => {
+        if (!extensions) return // case: inotial state, nothing has been loaded yet, hierarchy consists of only on element without data
+        extensions.forEach(({ id: extId, name }) => {
+          if (!allExtensions.map(({ id }) => id).includes(extId)) allExtensions.push({ id: extId, name })
+        })
+      })
+      let part = this.height / (allExtensions.length + 1)
+      allExtensions.forEach((ext, index) => {
+        ext.y = this.width * 1.8
+        ext.x = (index + 1) * part
+      })
+      return allExtensions
+    },
+    extensionPaths: function () {
+      let paths = []
+      this.lowestChilds.forEach(item => {
+        let { data: { extensions } } = item
+        let source = {
+          x: item.x,
+          y: item.y
+        }
+        if (!extensions) return // case: inotial state, nothing has been loaded yet, hierarchy consists of only on element without data
+        extensions.forEach(({ id: extId }) => {
+          let extension = this.extensionHierarchy.find(({ id }) => id === extId)
+          let target = {
+            x: extension.x,
+            y: extension.y
+          }
+          paths.push({ source, target })
+        })
+      })
+      return paths
     }
   }
 }
