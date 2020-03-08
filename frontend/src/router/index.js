@@ -10,6 +10,10 @@ import Servant from '../views/Servant.vue'
 import Master from '../views/Master.vue'
 import Hierarchy from '../views/Hierarchy.vue'
 import Scoreboard from '../views/Scoreboard.vue'
+import ServantWrapper from '../views/ServantWrapper.vue'
+import ServantBase from '../views/ServantBase.vue'
+import ServantServe from '../views/ServantServe.vue'
+import ServantCash from '../views/ServantCash.vue'
 
 Vue.use(VueRouter)
 
@@ -48,6 +52,27 @@ const routes = [
     path: '/servant',
     name: 'servant',
     component: Servant
+  },
+  {
+    path: '/servant/:tableId',
+    component: ServantWrapper,
+    children: [
+      {
+        path: '',
+        component: ServantBase,
+        name: 'ServantBase'
+      },
+      {
+        path: 'serve',
+        name: 'ServantServe',
+        component: ServantServe
+      },
+      {
+        path: 'cash',
+        name: 'ServantCash',
+        component: ServantCash
+      }
+    ]
   },
   {
     path: '/master',

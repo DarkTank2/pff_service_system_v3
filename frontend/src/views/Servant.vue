@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <!-- <v-row>
       <v-col cols="12">
         <v-select :items="tables" v-model="selectedTables" multiple item-text="name" clearable item-value="id" label="Tischauswahl">
           <template v-slot:selection="{ item, index }">
@@ -22,10 +22,18 @@
           </template>
         </v-select>
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
       <v-col cols="12">
-        <v-list three-line>
+        <v-list>
+          <template v-for="table in tables">
+            <v-list-item :key="'servant/listItem/tables/' + table.id" :to="{ name: 'ServantBase', params: { tableId: table.id } }">
+              {{ table | display }}
+            </v-list-item>
+            <v-divider :key="'servant/divider/tables/' + table.id"></v-divider>
+          </template>
+        </v-list>
+        <!-- <v-list three-line>
           <v-list-item-group v-model="finishedSelection" multiple>
             <template v-for="orderedItem in finishedOrderedItems">
               <v-list-item :key="'finishedOI/' + orderedItem.id" :value="orderedItem">
@@ -52,7 +60,7 @@
               <v-divider :key="'OIDivider/' + orderedItem.id"></v-divider>
             </template>
           </v-list-item-group>
-        </v-list>
+        </v-list> -->
       </v-col>
     </v-row>
   </v-container>
@@ -101,7 +109,7 @@ export default {
       findTables: 'find'
     }),
     filteredOrderedItems: function () {
-      return this.rawOrderedItems.filter(({ cashed, served, quantity, finished }) => quantity === finished)
+      return this.rawOrderedItems.filter(({ cashed, served, quantity, finished }) => quantity === finished && (cashed < quantity || served < quantity))
     },
     tableFilteredOrderedItems: function () {
       return this.filteredOrderedItems.filter(({ tableId }) => this.selectedTables.includes(tableId))
@@ -128,6 +136,11 @@ export default {
           }
         }
       }).data
+    }
+  },
+  filters: {
+    display: function ({ name }) {
+      return 'Tisch Nr.: ' + name
     }
   }
 }

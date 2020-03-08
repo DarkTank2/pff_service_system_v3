@@ -3,7 +3,7 @@
     <v-card-title>SCOREBOARD</v-card-title>
     <v-card-text>
       <svg height="1000" width="100%">
-        <circle
+        <!-- <circle
           v-for="(item, index) in root.descendants()"
           :key="index"
           :r="item.r"
@@ -28,7 +28,7 @@
             :y="item.x">
             {{ item.data.key }}
           </text>
-        </g>
+        </g> -->
       </svg>
     </v-card-text>
   </v-card>
@@ -84,6 +84,19 @@ export default {
     },
     root: function () {
       return this.layout(this.hierarchy)
+    },
+    showData: function () {
+      const svg = d3.select('svg')
+      svg.append('g')
+        .selectAll('circle')
+        .data(this.root.descendants())
+        .join('circle')
+        .attr('fill', 'none')
+        .attr('r', v => v.r)
+        .attr('cx', v => v.x)
+        .attr('cy', v => v.y)
+        .attr('stroke', 'white')
+      return svg.node()
     }
   }
 }

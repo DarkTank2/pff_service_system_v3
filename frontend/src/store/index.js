@@ -9,6 +9,10 @@ import waiterGetters from './waiter/getters'
 import waiterActions from './waiter/actions'
 import waiterMutations from './waiter/mutations'
 
+import servantGetters from './servant/getters'
+import servantActions from './servant/actions'
+import servantMutations from './servant/mutations'
+
 Vue.use(Vuex)
 Vue.use(FeathersVuex)
 
@@ -46,13 +50,24 @@ const waiter = {
   actions: waiterActions
 }
 
+const servant = {
+  namespaced: true,
+  state: {
+    selection: []
+  },
+  mutations: servantMutations,
+  getters: servantGetters,
+  actions: servantActions
+}
+
 export default new Vuex.Store({
   state: {},
   mutations: {},
   actions: {},
   modules: {
     base,
-    waiter
+    waiter,
+    servant
   },
   plugins: [...servicePlugins]
 })
