@@ -7,6 +7,7 @@ const updateSelection = ({ dispatch, state }, prop) => {
       OI.selected = 0
     })
     Promise.all(promises).then((data) => {
+      state.selection = []
       resolve(data)
     }).catch(err => {
       reject(err)

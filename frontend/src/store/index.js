@@ -53,7 +53,8 @@ const waiter = {
 const servant = {
   namespaced: true,
   state: {
-    selection: []
+    selection: [],
+    sum: 0
   },
   mutations: servantMutations,
   getters: servantGetters,

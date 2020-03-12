@@ -1,53 +1,34 @@
+const setSum = state => {
+  let sum = 0
+  state.selection.forEach(({ item, extensions, selected }) => {
+    const { price } = item
+    let tmp = price * selected
+    extensions.forEach(({ priceModifier }) => {
+      tmp *= priceModifier
+    })
+    sum += tmp
+  })
+  sum = Math.round(sum * 100) / 100
+  state.sum = sum
+  return sum
+}
+
 const addOrderedItem = (state, payload) => {
   if (state.selection.map(({ id }) => id).includes(payload.id)) return
   state.selection.push(payload)
+  state.sum = setSum(state)
 }
 
 const clearOrderedItems = state => {
+  state.selection.forEach(item => {
+    item.selected = 0
+  })
   state.selection = []
-}
-
-const increaseServeOI = (state, id) => {
-  state.selection.forEach(item => {
-    item.selected = item.selected === undefined ? 0 : item.selected
-    if (item.id === id) {
-      if (item.quantity > (item.served + item.selected)) item.selected++
-    }
-  })
-}
-
-const decreaseServeOI = (state, id) => {
-  state.selection.forEach(item => {
-    item.selected = item.selected === undefined ? 0 : item.selected
-    if (item.id === id) {
-      if (item.selected > 0) item.selected--
-    }
-  })
-}
-
-const increaseCashedOI = (state, id) => {
-  state.selection.forEach(item => {
-    item.selected = item.selected === undefined ? 0 : item.selected
-    if (item.id === id) {
-      if (item.quantity > (item.cashed + item.selected)) item.selected++
-    }
-  })
-}
-
-const decreaseCashedOI = (state, id) => {
-  state.selection.forEach(item => {
-    item.selected = item.selected === undefined ? 0 : item.selected
-    if (item.id === id) {
-      if (item.selected > 0) item.selected--
-    }
-  })
+  state.sum = setSum(state)
 }
 
 export default {
   addOrderedItem,
   clearOrderedItems,
-  increaseServeOI,
-  decreaseServeOI,
-  increaseCashedOI,
-  decreaseCashedOI
+  setSum
 }
