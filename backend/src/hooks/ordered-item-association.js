@@ -8,10 +8,10 @@ module.exports = (options = {}) => {
     const { types, categories, extensions, tables, items } = sequelize.models;
     context.params.sequelize = {
       include: [
-        { model: extensions, attributes: ['id', 'name'] },
+        { model: extensions, attributes: ['id', 'name', 'priceModifier'] },
         { model: tables, attributes: ['id', 'name'] },
         {
-          model: items, attributes: ['id', 'name'], include: [
+          model: items, attributes: ['id', 'name', 'price'], include: [
             { model: types, attributes: ['id', 'name'] },
             { model: categories, attributes: ['id', 'name'] }
           ]
