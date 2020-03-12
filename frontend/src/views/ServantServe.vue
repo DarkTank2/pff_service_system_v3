@@ -1,57 +1,87 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-btn block :to="{ name: 'ServantCash', params: { tableId: this.$route.params.tableId } }">Zum Kassieren</v-btn>
+      <v-container fluid>
+        <v-row>
+          <v-col cols="12">
+            <v-btn block @click="handleCash">{{ selectedIds.length === 0 ? 'Zum Kassieren' : 'Servieren/Zum Kassieren' }}</v-btn>
+          </v-col>
+          <v-col cols="12">
+            <v-btn block @click="handleSelection">{{ selectedIds.length === 0 ? 'Alles auswählen' : 'Alles abwählen' }}</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card-title>
     <v-card-text>
-      <v-list three-line>
-        <v-list-item v-for="orderedItem in orderedItems" :key="'notServed/OI/' + orderedItem.id" v-touch="{
-          left: () => removeOI(orderedItem),
-          right: () => addOI(orderedItem)
-        }">
-          <v-list-item-content>
-            <v-list-item-title v-text="orderedItem.item.name"></v-list-item-title>
-            <v-list-item-subtitle v-text="orderedItem.extensions.map(ext => ext.name).join(', ')" v-if="orderedItem.extensions.length > 0"></v-list-item-subtitle>
-            <v-list-item-subtitle v-text="orderedItem.table.name + '/' + orderedItem.id + ', by ' + orderedItem.waiter"></v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            {{ orderedItem.served !== undefined ? orderedItem.quantity - orderedItem.served - orderedItem.selected : orderedItem.quantity - orderedItem.served }}
-          </v-list-item-action>
-        </v-list-item>
+      <v-list three-line rounded>
+        <v-list-item-group v-model="selection" color="primary" multiple>
+          <v-list-item v-for="orderedItem in orderedItems" :key="'notServed/OI/' + orderedItem.id" @click="handleItem(orderedItem)">
+            <v-list-item-content>
+              <v-list-item-title v-text="orderedItem.item.name"></v-list-item-title>
+              <v-list-item-subtitle v-text="orderedItem.extensions.map(ext => ext.name).join(', ')" v-if="orderedItem.extensions.length > 0"></v-list-item-subtitle>
+              <v-list-item-subtitle v-text="orderedItem.table.name + '/' + orderedItem.id + ', by ' + orderedItem.waiter"></v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              {{ orderedItem | quantity }}
+            </v-list-item-action>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-card-text>
   </v-card>
 </template>
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'ServantServe',
   props: [],
   components: {},
   data () {
-    return {}
+    return {
+      selection: [],
+      selectedIds: []
+    }
   },
   created: function () {},
-  mounted: function () {},
+  mounted: function () {
+    this.fetchOrderedItems()
+  },
   methods: {
     ...mapActions('ordered-items', {
-      fetchOrderedItems: 'find'
+      fetchOrderedItems: 'find',
+      updateOrderedItem: 'update'
     }),
-    ...mapMutations('servant', [
-      'addOrderedItem',
-      'clearOrderedItems',
-      'increaseServeOI',
-      'decreaseServeOI'
-    ]),
-    ...mapActions('servant', [
-      'updateSelection'
-    ]),
-    addOI: function (item) {
-      this.addOrderedItem(item)
-      this.increaseServeOI(item.id)
+    handleItem: function ({ id: itemId }) {
+      if (this.selectedIds.includes(itemId)) {
+        this.selectedIds = this.selectedIds.filter(id => id !== itemId)
+      } else {
+        this.selectedIds.push(itemId)
+      }
     },
-    removeOI: function (item) {
-      this.decreaseServeOI(item.id)
+    handleCash: function () {
+      let promises = []
+      if (this.selectedIds.length !== 0) {
+        this.orderedItems
+          .filter(({ id }) => this.selectedIds.includes(id))
+          .forEach(orderedItem => {
+            promises.push(this.updateOrderedItem([orderedItem.id, { ...orderedItem, served: orderedItem.quantity }, {}]))
+          })
+      }
+      Promise.all(promises).then(() => {
+        this.$router.push({ name: 'ServantCash', params: { tableId: this.tableId } })
+        // :to="{ name: 'ServantCash', params: { tableId: this.$route.params.tableId } }"
+      })
+    },
+    handleSelection: function () {
+      if (this.selectedIds.length === 0) {
+        this.orderedItems.forEach(({ id }, index) => {
+          this.selection.push(index)
+          this.selectedIds.push(id)
+        })
+      } else {
+        this.selection = []
+        this.selectedIds = []
+      }
     }
   },
   computed: {
@@ -59,7 +89,7 @@ export default {
       findOrderedItems: 'find'
     }),
     tableId: function () {
-      return this.$route.params.tableId
+      return parseInt(this.$route.params.tableId)
     },
     orderedItems: function () {
       return this.findOrderedItems({
@@ -71,8 +101,7 @@ export default {
   },
   filters: {
     quantity: function (item) {
-      if (item.selected === undefined) return item.quantity - item.served
-      return item.quantity - item.served - item.selected
+      return item.quantity - item.served
     }
   }
 }
