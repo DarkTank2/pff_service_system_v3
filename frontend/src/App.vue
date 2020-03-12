@@ -11,18 +11,21 @@
       <router-view/>
     </v-content>
     <Sidebar :drawer="drawer" v-on:update-drawer="updateDrawer"/>
+    <BottomNav />
   </v-app>
 </template>
 
 <script>
 import Sidebar from './components/Sidebar.vue'
+import BottomNav from './components/BottomNav.vue'
 import FinalizeButton from './components/waiter/finalizeButton'
 import { mapState } from 'vuex'
 export default {
   name: 'App',
   components: {
     Sidebar,
-    FinalizeButton
+    FinalizeButton,
+    BottomNav
   },
 
   data: () => ({
