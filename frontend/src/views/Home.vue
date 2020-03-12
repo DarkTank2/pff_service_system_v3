@@ -1,27 +1,22 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-card>
+    <v-card-title>Service-System</v-card-title>
+    <v-card-text>
+      <v-container fluid>
+        <v-row>
+          <v-col cols="12">
+            <v-btn block :to="{ name: 'waiter' }">Kellnern</v-btn>
+          </v-col>
+          <v-col cols="12">
+            <v-btn block :to="{ name: 'servant' }">Servieren</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+  </v-card>
 </template>
-
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-import { mapActions } from 'vuex'
-
 export default {
-  name: 'home',
-  components: {
-    HelloWorld
-  },
-  created: function () {
-    this.fetchTables()
-  },
-  methods: {
-    ...mapActions('tables', {
-      fetchTables: 'find'
-    })
-  }
+  name: 'home'
 }
 </script>
