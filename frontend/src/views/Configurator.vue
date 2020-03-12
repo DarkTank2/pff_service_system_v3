@@ -130,6 +130,22 @@
                 </v-dialog>
             </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="2">
+            <v-btn block @click="exportConfig">
+              <v-icon>file_download</v-icon>
+              Export configuration
+            </v-btn>
+          </v-col>
+          <v-col cols="4">
+            <v-file-input v-model="uploadedFile" label="File input" accept=".json" clearable clear-icon="close"></v-file-input>
+          </v-col>
+          <v-col cols="2">
+            <v-btn :disabled="uploadedFile === null || uploadedFile === undefined" @click="readFile">
+              Validate and save
+            </v-btn>
+          </v-col>
+        </v-row>
     </v-container>
 </template>
 <script>
@@ -141,6 +157,7 @@ import CategoryForm from '../components/configurator/forms/categoryForm.vue'
 import TypeForm from '../components/configurator/forms/typeForm.vue'
 import ExtensionForm from '../components/configurator/forms/extensionForm.vue'
 import ItemForm from '../components/configurator/forms/itemForm.vue'
+import { EqualityChecker } from '../services/equalityService'
 export default {
   name: 'Configurator',
   props: [],
@@ -163,7 +180,9 @@ export default {
       categoryDialog: null,
       typeDialog: null,
       extensionDialog: null,
-      itemDialog: null
+      itemDialog: null,
+      uploadedFile: null,
+      fileContent: null
     }
   },
   created: function () {},
@@ -177,23 +196,131 @@ export default {
   },
   methods: {
     ...mapActions('tables', {
-      fetchTables: 'find'
+      fetchTables: 'find',
+      createTable: 'create'
     }),
     ...mapActions('categories', {
-      fetchCategories: 'find'
+      fetchCategories: 'find',
+      createCategory: 'create'
     }),
     ...mapActions('items', {
-      fetchItems: 'find'
+      fetchItems: 'find',
+      createItem: 'create'
     }),
     ...mapActions('types', {
-      fetchTypes: 'find'
+      fetchTypes: 'find',
+      createType: 'create'
     }),
     ...mapActions('extensions', {
-      fetchExtensions: 'find'
+      fetchExtensions: 'find',
+      createExtension: 'create'
     }),
     ...mapActions('items-can-have-extensions', {
-      fetchItemsExtensionsMap: 'find'
-    })
+      fetchItemsExtensionsMap: 'find',
+      createMap: 'create'
+    }),
+    exportConfig: function () {
+      let path = 'config.json'
+      let data = {
+        tables: this.filteredTables.map(({ id, name }) => ({ id, name })),
+        categories: this.filteredCategories.map(({ id, name }) => ({ id, name })),
+        items: this.filteredItems.map(({ id, name, category, type, price, extensions }) => ({ id, name, category, type, price, extensions })),
+        types: this.filteredTypes.map(({ id, name }) => ({ id, name })),
+        extensions: this.filteredExtensions.map(({ id, name, priceModifier }) => ({ id, name, priceModifier })),
+        itemsCanHaveExtensions: this.itemsExtensionsMap.map(({ extensionId, itemId }) => ({ extensionId, itemId }))
+      }
+      let e = document.createElement('a')
+      e.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)))
+      e.setAttribute('download', path)
+      e.style.display = 'none'
+      document.body.appendChild(e)
+      e.click()
+      document.body.removeChild(e)
+    },
+    readFile: function () {
+      if (!this.uploadedFile) return
+      let reader = new FileReader()
+      let that = this
+      reader.onload = e => {
+        let l = e && e.target && e.target.result
+        if (l) {
+          that.fileContent = JSON.parse(l)
+          this.crossCheckContent()
+        }
+      }
+      reader.onerror = e => {
+        reader.abort()
+      }
+      reader.readAsText(this.uploadedFile)
+    },
+    crossCheckContent: function () {
+      const { tables, items, categories, extensions, types } = this.fileContent
+      let promises = []
+      tables.forEach(table => {
+        let foundTable = this.tables.find(existingTable => this.tableChecker.compare(existingTable, table))
+        if (!foundTable) {
+          console.log('Table not found, creating new one!', JSON.stringify(table))
+          this.createTable(table)
+        }
+      })
+      types.forEach(type => {
+        let foundType = this.types.find(existingType => this.typeChecker.compare(type, existingType))
+        if (!foundType) {
+          console.log('Type not found, creating new one!', JSON.stringify(type))
+          promises.push(this.createType(type).then(data => {
+            type.newId = data.id
+            return { type }
+          }))
+        }
+      })
+      categories.forEach(cat => {
+        let foundCat = this.categories.find(existingCat => this.categoryChecker.compare(cat, existingCat))
+        if (!foundCat) {
+          console.log('Category not found, creating new one!', JSON.stringify(cat))
+          promises.push(this.createCategory(cat).then(data => {
+            cat.newId = data.id
+            return { category: cat }
+          }))
+        }
+      })
+      extensions.forEach(ext => {
+        let foundExt = this.extensions.find(existingExt => this.extensionChecker.compare(ext, existingExt))
+        if (!foundExt) {
+          console.log('Extension not found, creating new one!', JSON.stringify(ext))
+          promises.push(this.createExtension(ext).then(data => {
+            ext.newId = data.id
+            return { extension: ext }
+          }))
+        }
+      })
+
+      Promise.all(promises).then(data => {
+        items.forEach(item => {
+          let foundItem = this.items.find(existingItem => this.itemChecker.compare(item, existingItem))
+          if (!foundItem) {
+            console.log('Item not found, creating new one!', JSON.stringify(item))
+            let type = this.types.find(type => this.typeChecker.compare(type, item.type))
+            let category = this.categories.find(cat => this.categoryChecker.compare(cat, item.category))
+            let extensions = []
+            item.extensions.forEach(ext => {
+              extensions.push(this.extensions.find(existingExt => this.extensionChecker.compare(ext, existingExt)))
+            })
+            item.categoryId = category.id
+            item.typeId = type.id
+            item.extensions = extensions.map(ext => ({ id: ext.id }))
+            this.createItem(item)
+          }
+        })
+      })
+
+      // not needed since the map is already created in backend
+      // itemsCanHaveExtensions.forEach(map => {
+      //   let foundMap = this.itemsExtensionsMap.find(existingMap => this.mapperChecker.compare(map, existingMap))
+      //   if (!foundMap) {
+      //     console.log('Mapping not found, creating new one!', JSON.stringify(map))
+      //   }
+      // })
+    }
   },
   computed: {
     ...mapGetters('tables', {
@@ -253,6 +380,36 @@ export default {
     selectedItem: function () {
       const { Items } = this.$FeathersVuex.api
       return this.itemModel === undefined ? new Items() : this.getItem(this.itemModel.id)
+    },
+    tableChecker: function () {
+      return new EqualityChecker()
+        .addCheck(v => v.name)
+    },
+    categoryChecker: function () {
+      return new EqualityChecker()
+        .addCheck(v => v.name)
+    },
+    extensionChecker: function () {
+      return new EqualityChecker()
+        .addCheck(v => v.name)
+        .addCheck(v => v.priceModifier)
+    },
+    mapperChecker: function () {
+      return new EqualityChecker()
+        .addForeignKeyChecker(v => v.extensionId, this.extensionChecker, this.fileContent.extensions, this.extensions, 'id')
+        .addForeignKeyChecker(v => v.itemId, this.itemChecker, this.fileContent.items, this.items, 'id')
+    }, // not working since the ids might differ, foreign id checker!! or linked checkers
+    itemChecker: function () {
+      return new EqualityChecker()
+        .addCheck(v => v.name)
+        .addCheck(v => v.price)
+        .addLinkedChecker(v => v.category, this.categoryChecker)
+        .addLinkedChecker(v => v.type, this.typeChecker)
+        .addArrayCheck(v => v.extensions, this.extensionChecker)
+    },
+    typeChecker: function () {
+      return new EqualityChecker()
+        .addCheck(v => v.name)
     }
   }
 }
