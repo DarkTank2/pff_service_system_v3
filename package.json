@@ -1,6 +1,6 @@
 {
   "name": "scout_service_system_v3",
-  "version": "1.0.0",
+  "version": "1.0",
   "description": "Service system for Scouts based on feathers (backend) and vue/vuetify/vuex (frontend).",
   "main": "index.js",
   "scripts": {
