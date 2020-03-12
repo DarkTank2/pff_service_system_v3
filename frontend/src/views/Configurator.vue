@@ -259,14 +259,12 @@ export default {
       tables.forEach(table => {
         let foundTable = this.tables.find(existingTable => this.tableChecker.compare(existingTable, table))
         if (!foundTable) {
-          console.log('Table not found, creating new one!', JSON.stringify(table))
           this.createTable(table)
         }
       })
       types.forEach(type => {
         let foundType = this.types.find(existingType => this.typeChecker.compare(type, existingType))
         if (!foundType) {
-          console.log('Type not found, creating new one!', JSON.stringify(type))
           promises.push(this.createType(type).then(data => {
             type.newId = data.id
             return { type }
@@ -276,7 +274,6 @@ export default {
       categories.forEach(cat => {
         let foundCat = this.categories.find(existingCat => this.categoryChecker.compare(cat, existingCat))
         if (!foundCat) {
-          console.log('Category not found, creating new one!', JSON.stringify(cat))
           promises.push(this.createCategory(cat).then(data => {
             cat.newId = data.id
             return { category: cat }
@@ -286,7 +283,6 @@ export default {
       extensions.forEach(ext => {
         let foundExt = this.extensions.find(existingExt => this.extensionChecker.compare(ext, existingExt))
         if (!foundExt) {
-          console.log('Extension not found, creating new one!', JSON.stringify(ext))
           promises.push(this.createExtension(ext).then(data => {
             ext.newId = data.id
             return { extension: ext }
@@ -298,7 +294,6 @@ export default {
         items.forEach(item => {
           let foundItem = this.items.find(existingItem => this.itemChecker.compare(item, existingItem))
           if (!foundItem) {
-            console.log('Item not found, creating new one!', JSON.stringify(item))
             let type = this.types.find(type => this.typeChecker.compare(type, item.type))
             let category = this.categories.find(cat => this.categoryChecker.compare(cat, item.category))
             let extensions = []
@@ -317,7 +312,6 @@ export default {
       // itemsCanHaveExtensions.forEach(map => {
       //   let foundMap = this.itemsExtensionsMap.find(existingMap => this.mapperChecker.compare(map, existingMap))
       //   if (!foundMap) {
-      //     console.log('Mapping not found, creating new one!', JSON.stringify(map))
       //   }
       // })
     }
