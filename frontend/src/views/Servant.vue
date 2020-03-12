@@ -1,31 +1,8 @@
 <template>
   <v-container>
-    <!-- <v-row>
-      <v-col cols="12">
-        <v-select :items="tables" v-model="selectedTables" multiple item-text="name" clearable item-value="id" label="Tischauswahl">
-          <template v-slot:selection="{ item, index }">
-            <v-chip v-if="index <= 2">
-              {{ item.name }}
-            </v-chip>
-            <span v-if="index === 3">(+{{ selectedTables.length - 3 }} weitere Tische)</span>
-          </template>
-          <template v-slot:prepend-item>
-            <v-list-item
-              ripple
-              @click="toggle"
-            >
-              <v-list-item-content>
-                <v-list-item-title>{{ allText }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-          </template>
-        </v-select>
-      </v-col>
-    </v-row> -->
     <v-row>
       <v-col cols="12">
-        <v-list>
+        <v-list v-if="tables.length > 0">
           <template v-for="table in tables">
             <v-list-item :key="'servant/listItem/tables/' + table.id" :to="{ name: 'ServantBase', params: { tableId: table.id } }">
               {{ table | display }}
@@ -33,34 +10,7 @@
             <v-divider :key="'servant/divider/tables/' + table.id"></v-divider>
           </template>
         </v-list>
-        <!-- <v-list three-line>
-          <v-list-item-group v-model="finishedSelection" multiple>
-            <template v-for="orderedItem in finishedOrderedItems">
-              <v-list-item :key="'finishedOI/' + orderedItem.id" :value="orderedItem">
-                <template v-slot:default="{ active, toggle }">
-                  <v-list-item-action>
-                    <v-checkbox
-                      on-icon="checkbox-marked"
-                      off-icon="checkbox-blank-outline"
-                      :input-value="active"
-                      :true-value="orderedItem"
-                      @click="toggle"
-                    ></v-checkbox>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title v-text="orderedItem.item.name"></v-list-item-title>
-                    <v-list-item-subtitle v-text="orderedItem.extensions.map(ext => ext.name).join(', ')"></v-list-item-subtitle>
-                    <v-list-item-subtitle v-text="orderedItem.table.name + '/' + orderedItem.id + ', by ' + orderedItem.waiter"></v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-avatar>
-                    {{ orderedItem.quantity - orderedItem.served }}
-                  </v-list-item-avatar>
-                </template>
-              </v-list-item>
-              <v-divider :key="'OIDivider/' + orderedItem.id"></v-divider>
-            </template>
-          </v-list-item-group>
-        </v-list> -->
+        <v-alert v-if="tables.length === 0" outlined color="primary">Derzeit keine Tische zum bearbeiten verfügbar</v-alert>
       </v-col>
     </v-row>
   </v-container>
